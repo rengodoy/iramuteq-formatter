@@ -1,0 +1,14 @@
+{
+  "name": "iramuteq-formatter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  },
+  "dependencies": {
+    "material-design-lite": "^1.3.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
