@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
+import copy from 'copy-to-clipboard'
 
 const IramuteqFormatter = () => {
   const [currentText, setCurrentText] = useState("")
@@ -24,12 +25,13 @@ const IramuteqFormatter = () => {
                .replace(/[\"\'\-\$%\*]/g, '')
   }
 
-  const generateOutput = () => {
-    return items.reduce((output, item, index) => {
-      const id = formatId(index)
-      const strippedText = stripText(item)
-      return output + `**** *${id}\n${strippedText}\n\n`
-    }, "")
+  const output = items.reduce((output, item, index) => (
+    output + `**** *${formatId(index)}\n${stripText(item)}\n\n`
+  ), '')
+
+  const onCopy = () => {
+    copy(output)
+    alert('Copiado')
   }
 
   return (
@@ -48,7 +50,7 @@ const IramuteqFormatter = () => {
           <div className="content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
             <strong>Cole o texto para processar:</strong>
             <textarea value={currentText} onChange={(event) => setCurrentText(event.target.value)}></textarea>
-            <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onClick={addText}>Adicionar</button>
+            <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onClick={addText}>Adicionar</button>
           </div>
         </div>
 
@@ -80,7 +82,8 @@ const IramuteqFormatter = () => {
 
           <div className="content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--5-col mdl-cell--12-col-phone mdl-cell--12-col-tablet">
             <strong>Resultado:</strong>
-            <textarea value={generateOutput()} readOnly></textarea>
+            <textarea value={output} readOnly></textarea>
+            <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onClick={onCopy}>Copiar para área de transferência</button>
           </div>
         </div>
       </main>
