@@ -32,3 +32,12 @@ textarea {
   min-height: 200px;
   margin: 8px 0;
 }
+
+code {
+  background: #DDD;
+  padding: 4px 4px;
+  border-radius: 3px;
+  display: inline-block;
+  font-size: 0.8em;
+  line-height: 0.8em;
+}

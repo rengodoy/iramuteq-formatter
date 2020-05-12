@@ -22,7 +22,9 @@ const IramuteqFormatter = () => {
 
   const stripText = (text) => {
     return text.replace(/\n/gm, ' ')
+               .replace(/([a-zA-Z\u00C0-\u017F]+)-/g, (_, ...args) => `${args[0]}_`)
                .replace(/[\"\'\-\$%\*]/g, '')
+               .replace(/(^|\s+)(a|o|e|as|os|no|nos|na|nas|do|dos|de|que|em)\s+/g, ' ')
   }
 
   const output = items.reduce((output, item, index) => (
@@ -48,6 +50,19 @@ const IramuteqFormatter = () => {
         <div className="mdl-grid container">
           <div className="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
           <div className="content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
+            <span>Esta ferramenta processa textos para utilizar no Iramuteq. As seguintes operações são feitas:</span>
+            <ul>
+              <li>Quebras de linha são removidas</li>
+              <li>Os caracteres <code>"</code>, <code>'</code>, <code>-</code> <code>$</code>, <code>%</code> e <code>*</code> são removidos</li>
+              <li>As expressões <code>a</code>, <code>o</code>, <code>e</code>, <code>as</code>, <code>os</code>, <code>no</code>, <code>nos</code>, <code>na</code>, <code>nas</code>, <code>do</code>, <code>dos</code>, <code>de</code>, <code>que</code> e <code>em</code> são removidas</li>
+              <li>Palavras compostas por hífen, tais como <code>segunda-feira</code> e <code>bem-me-quer</code>, têm seus hífens trocados por <em>underline (_)</em>.</li>
+            </ul>
+
+            <p>Ao adicionar um texto, ele será incluído na lista de textos, que permite remover um texto caso adicionado erroneamente.</p>
+            <p>O resultado parcial é exibido a medida que os textos são adicionados.</p>
+
+            <br/>
+
             <strong>Cole o texto para processar:</strong>
             <textarea value={currentText} onChange={(event) => setCurrentText(event.target.value)}></textarea>
             <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onClick={addText}>Adicionar</button>
