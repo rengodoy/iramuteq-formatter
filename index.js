@@ -5,7 +5,7 @@ import CompositeWordsUrl from './composite-words.txt'
 import { readFileSync } from 'fs'
 
 const CompositeWordsBlob = readFileSync(__dirname + '/composite-words.txt', 'utf-8')
-const CompositeWords = CompositeWordsBlob.split("\n")
+const CompositeWords = CompositeWordsBlob.split("\n").filter((word) => word)
 const CompositeWordsRegex = new RegExp(CompositeWords.join('|'), 'ig')
 const sampleCompositeWord = CompositeWords[Math.round(Math.random() * (CompositeWords.length - 1))]
 
