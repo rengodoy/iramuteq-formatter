@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import copy from 'copy-to-clipboard'
+import CompositeWordsUrl from './composite-words.txt'
+import { readFileSync } from 'fs'
+
+const CompositeWordsBlob = readFileSync(__dirname + '/composite-words.txt', 'utf-8')
+const CompositeWords = CompositeWordsBlob.split("\n")
+const CompositeWordsRegex = new RegExp(CompositeWords.join('|'), 'ig')
+const sampleCompositeWord = CompositeWords[Math.round(Math.random() * (CompositeWords.length - 1))]
 
 const IramuteqFormatter = () => {
   const [currentText, setCurrentText] = useState("")
@@ -23,6 +30,7 @@ const IramuteqFormatter = () => {
   const stripText = (text) => {
     return text.replace(/\n/gm, ' ')
                .replace(/([a-zA-Z\u00C0-\u017F]+)-/g, (_, ...args) => `${args[0]}_`)
+               .replace(CompositeWordsRegex, (substring) => substring.replace(/\s/g, '_'))
                .replace(/[\"\'\-\$%\*]/g, '')
                .replace(/(^|\s+)(a|o|e|as|os|no|nos|na|nas|do|dos|de|que|em)\s+/g, ' ')
   }
@@ -56,6 +64,7 @@ const IramuteqFormatter = () => {
               <li>Os caracteres <code>"</code>, <code>'</code>, <code>-</code> <code>$</code>, <code>%</code> e <code>*</code> são removidos</li>
               <li>As expressões <code>a</code>, <code>o</code>, <code>e</code>, <code>as</code>, <code>os</code>, <code>no</code>, <code>nos</code>, <code>na</code>, <code>nas</code>, <code>do</code>, <code>dos</code>, <code>de</code>, <code>que</code> e <code>em</code> são removidas</li>
               <li>Palavras compostas por hífen, tais como <code>segunda-feira</code> e <code>bem-me-quer</code>, têm seus hífens trocados por <em>underline (_)</em>.</li>
+              <li>Locuções substantivas sem hífen, tais como <code>{sampleCompositeWord}</code>, têm seus espaços substituídos por <em>underline (_)</em>. Nem todas as palavras são incluídas. <a href={CompositeWordsUrl} target="_blank">Veja a lista</a>.</li>
             </ul>
 
             <p>Ao adicionar um texto, ele será incluído na lista de textos, que permite remover um texto caso adicionado erroneamente.</p>
