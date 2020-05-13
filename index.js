@@ -11,7 +11,10 @@ const sampleCompositeWord = CompositeWords[Math.round(Math.random() * (Composite
 
 const IramuteqFormatter = () => {
   const loadedItems = JSON.parse(localStorage.getItem('iramuteq-formatter-cache') || '[]')
+  const loadedId = JSON.parse(localStorage.getItem('iramuteq-formatter-initial-id') || '0')
+
   const [currentText, setCurrentText] = useState("")
+  const [initialId, setInitialId] = useState(loadedId)
   const [items, setItems] = useState(loadedItems)
 
   const addText = () => {
@@ -20,6 +23,7 @@ const IramuteqFormatter = () => {
     setCurrentText("")
 
     try {
+      localStorage.setItem('iramuteq-formatter-initial-id', JSON.stringify(initialId))
       localStorage.setItem('iramuteq-formatter-cache', JSON.stringify(newItems))
     } catch (e) {
       alert('Não foi possível salvar o progresso. Você pode continuar utilizando normalmente o programa, mas lembre-se que as alterações partir de agora podem ser perdidas.')
@@ -33,20 +37,22 @@ const IramuteqFormatter = () => {
   const onRemoveAll = () => {
     if (confirm('Você tem certeza que deseja apagar todos os textos inseridos? Essa ação é irreversível.')) {
       setItems([])
+      setInitialId('')
+      localStorage.setItem('iramuteq-formatter-initial-id', '0')
       localStorage.setItem('iramuteq-formatter-cache', '[]')
     }
   }
 
   const formatId = (index) => {
-    const num = (index + 1).toString()
+    const num = (index + initialId).toString()
     return 'n_' + (num.length < 3 ?  ("0".repeat(3 - num.length) + num) : num)
   }
 
   const stripText = (text) => {
     return text.replace(/\n/gm, ' ')
                .replace(/([a-zA-Z\u00C0-\u017F]+)-/g, (_, ...args) => `${args[0]}_`)
-               .replace(/\set\sal./, ' ')
-               .replace(/\scols./, ' ')
+               .replace(/\set\sal.\s/, ' ')
+               .replace(/\scols.\s/, ' ')
                .replace(CompositeWordsRegex, (substring) => substring.replace(/\s/g, '_'))
                .replace(/[\"\'\-\$%\*]/g, '')
                .replace(/(^|\s+)(a|o|e|as|os|no|nos|na|nas|do|dos|de|que|em)\s+/g, ' ')
@@ -82,13 +88,31 @@ const IramuteqFormatter = () => {
               <li>As expressões <code>a</code>, <code>o</code>, <code>e</code>, <code>as</code>, <code>os</code>, <code>no</code>, <code>nos</code>, <code>na</code>, <code>nas</code>, <code>do</code>, <code>dos</code>, <code>de</code>, <code>que</code> e <code>em</code> são removidas</li>
               <li>Palavras compostas por hífen, tais como <code>segunda-feira</code> e <code>bem-me-quer</code>, têm seus hífens trocados por <em>underline (_)</em>.</li>
               <li>Locuções substantivas sem hífen, tais como <code>{sampleCompositeWord}</code>, têm seus espaços substituídos por <em>underline (_)</em>. Nem todas as palavras são incluídas. <a href={CompositeWordsUrl} target="_blank">Veja a lista</a>.</li>
-              <li>As expressões <code>at al.</code> e <code>cols.</code> são removidas</li>
+              <li>As expressões <code>et al.</code> e <code>cols.</code> são removidas</li>
             </ul>
 
             <p>Ao adicionar um texto, ele será incluído na lista de textos, que permite remover um texto caso adicionado erroneamente.</p>
             <p>O resultado parcial é exibido a medida que os textos são adicionados.</p>
 
             <br/>
+
+            {
+              (items.length == 0) && (
+                <div>
+                  <strong>Configure o número do primeiro texto:</strong>
+                  <div className="mdl-textfield mdl-js-textfield">
+                    <input
+                      className="mdl-textfield__input"
+                      type="number"
+                      onChange={(event) => setInitialId(parseInt(event.target.value.replace(/\D/g, ''), 10))}
+                      value={`${initialId}`}
+                      id="initialNumber"
+                    />
+                    <label className="mdl-textfield__label" htmlFor="initialNumber">Número inicial</label>
+                  </div>
+                </div>
+              )
+            }
 
             <strong>Cole o texto para processar:</strong>
             <textarea value={currentText} onChange={(event) => setCurrentText(event.target.value)}></textarea>
