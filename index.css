@@ -18,12 +18,33 @@ main {
 
 .content {
   border-radius: 2px;
-  padding: 56px;
+  padding: 28px;
 }
 
-.text-list {
-  max-height: 400px;
+.result-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+  padding: 28px 0;
+}
+
+.result-container > h3 {
+  font-size: 1.5em;
+  margin: 0;
+  font-weight: bold;
+}
+
+.result-container > h3, .result-container > div {
+  padding: 0 28px;
+}
+
+.result {
+  flex: 1;
   overflow: auto;
+  border: 1px solid #CCC;
+  border-left-width: 0;
+  border-right-width: 0;
+  margin: 28px 0;
 }
 
 textarea {
@@ -31,6 +52,8 @@ textarea {
   width: 100%;
   min-height: 200px;
   margin: 8px 0;
+  font-family: monospace;
+  padding: 8px;
 }
 
 code {

@@ -10,16 +10,31 @@ const CompositeWordsRegex = new RegExp(CompositeWords.join('|'), 'ig')
 const sampleCompositeWord = CompositeWords[Math.round(Math.random() * (CompositeWords.length - 1))]
 
 const IramuteqFormatter = () => {
+  const loadedItems = JSON.parse(localStorage.getItem('iramuteq-formatter-cache') || '[]')
   const [currentText, setCurrentText] = useState("")
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState(loadedItems)
 
   const addText = () => {
-    setItems([...items, currentText])
+    const newItems = [...items, currentText]
+    setItems(newItems)
     setCurrentText("")
+
+    try {
+      localStorage.setItem('iramuteq-formatter-cache', JSON.stringify(newItems))
+    } catch (e) {
+      alert('Não foi possível salvar o progresso. Você pode continuar utilizando normalmente o programa, mas lembre-se que as alterações partir de agora podem ser perdidas.')
+    }
   }
 
   const onRemove = (index) => {
     setItems(items.filter((_, iterIndex) => iterIndex != index))
+  }
+
+  const onRemoveAll = () => {
+    if (confirm('Você tem certeza que deseja apagar todos os textos inseridos? Essa ação é irreversível.')) {
+      setItems([])
+      localStorage.setItem('iramuteq-formatter-cache', '[]')
+    }
   }
 
   const formatId = (index) => {
@@ -80,9 +95,10 @@ const IramuteqFormatter = () => {
 
         <div className="mdl-grid container">
           <div className="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
-          <div className="content text-list mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--5-col mdl-cell--12-col-phone mdl-cell--12-col-tablet">
-            <strong>Lista de Textos:</strong>
-            <ul className="mdl-list">
+          <div className="content result-container mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--5-col mdl-cell--12-col-phone mdl-cell--12-col-tablet">
+            <h3>Lista de Textos</h3>
+
+            <ul className="mdl-list result">
               {
                 items.map((item, index) => (
                   <li key={index} className="mdl-list__item mdl-list__item--three-line">
@@ -93,7 +109,7 @@ const IramuteqFormatter = () => {
                       </span>
                     </span>
 
-                    <span className="mdl-list__item-scondary-content">
+                    <span className="mdl-list__item-secondary-content">
                       <a onClick={() => onRemove(index)} className="mdl-list__item-scondary-action">
                         <i className="material-icons">delete</i>
                       </a>
@@ -102,12 +118,20 @@ const IramuteqFormatter = () => {
                 ))
               }
             </ul>
+
+            <div>
+              <a onClick={onRemoveAll} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                Remover todos
+              </a>
+            </div>
           </div>
 
-          <div className="content mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--5-col mdl-cell--12-col-phone mdl-cell--12-col-tablet">
-            <strong>Resultado:</strong>
-            <textarea value={output} readOnly></textarea>
-            <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onClick={onCopy}>Copiar para área de transferência</button>
+          <div className="content result-container mdl-color--white mdl-shadow--4dp mdl-color-text--grey-800 mdl-cell mdl-cell--5-col mdl-cell--12-col-phone mdl-cell--12-col-tablet">
+            <h3>Resultado</h3>
+            <textarea className="result" value={output} readOnly></textarea>
+            <div>
+              <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onClick={onCopy}>Copiar para área de transferência</button>
+            </div>
           </div>
         </div>
       </main>
