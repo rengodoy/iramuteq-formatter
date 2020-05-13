@@ -45,6 +45,8 @@ const IramuteqFormatter = () => {
   const stripText = (text) => {
     return text.replace(/\n/gm, ' ')
                .replace(/([a-zA-Z\u00C0-\u017F]+)-/g, (_, ...args) => `${args[0]}_`)
+               .replace(/\set\sal./, ' ')
+               .replace(/\scols./, ' ')
                .replace(CompositeWordsRegex, (substring) => substring.replace(/\s/g, '_'))
                .replace(/[\"\'\-\$%\*]/g, '')
                .replace(/(^|\s+)(a|o|e|as|os|no|nos|na|nas|do|dos|de|que|em)\s+/g, ' ')
@@ -80,6 +82,7 @@ const IramuteqFormatter = () => {
               <li>As expressões <code>a</code>, <code>o</code>, <code>e</code>, <code>as</code>, <code>os</code>, <code>no</code>, <code>nos</code>, <code>na</code>, <code>nas</code>, <code>do</code>, <code>dos</code>, <code>de</code>, <code>que</code> e <code>em</code> são removidas</li>
               <li>Palavras compostas por hífen, tais como <code>segunda-feira</code> e <code>bem-me-quer</code>, têm seus hífens trocados por <em>underline (_)</em>.</li>
               <li>Locuções substantivas sem hífen, tais como <code>{sampleCompositeWord}</code>, têm seus espaços substituídos por <em>underline (_)</em>. Nem todas as palavras são incluídas. <a href={CompositeWordsUrl} target="_blank">Veja a lista</a>.</li>
+              <li>As expressões <code>at al.</code> e <code>cols.</code> são removidas</li>
             </ul>
 
             <p>Ao adicionar um texto, ele será incluído na lista de textos, que permite remover um texto caso adicionado erroneamente.</p>
